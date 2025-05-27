@@ -1,0 +1,51 @@
+components_manager:
+  task_processors:
+    main-task-processor:
+      worker_threads: 1
+
+    fs-task-processor:
+      worker_threads: 1
+
+  default_task_processor: main-task-processor
+
+  components:
+    server:
+      listener:
+        port: 8080
+        task_processor: main-task-processor
+
+    cors-middleware:
+      allow-origin: 'http://localhost:8000'
+      allow-methods: 'GET, POST, PUT, DELETE, OPTIONS'
+      allow-headers: 'Content-Type, Authorization'
+
+    auth-middleware: {}
+    auth-pipeline-builder: {}
+
+    default-server-middleware-pipeline-builder:
+      append:
+        - cors-middleware
+
+    logging:
+      fs-task-processor: fs-task-processor
+      loggers:
+        default:
+          file_path: '@stderr'
+          level: debug
+          overflow_behavior: discard
+
+    user-storage: {}
+
+    user-handler:
+      path: /user/*
+      method: GET,POST,PUT,DELETE,OPTIONS
+      task_processor: main-task-processor
+      middlewares:
+        pipeline-builder: auth-pipeline-builder
+        auth-middleware:
+          public-methods: [POST]
+
+    auth-handler:
+      path: /auth
+      method: POST,OPTIONS
+      task_processor: main-task-processor

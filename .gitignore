@@ -1,2 +1,5 @@
 .structurizr/
-lab-1/*.json
+images/
+workspace.json
+build-*/
+.ccache/
