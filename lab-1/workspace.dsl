@@ -28,27 +28,27 @@ workspace "Online shop" {
 			cart_database = container "Cart database" {
 				tags "database"
 				description "Stores cart information for each customer"
-				technology "PostgreSQL"
+				technology "In-memory"
 			}
 
 			shop_database = container "Shop database" {
 				tags "database"
 				description "Stores information about available shop goods"
-				technology "PostgreSQL"
+				technology "Mongo"
 			}
 
 			shop_service = container "Shop service" {
 				description "Handles shop item queries"
 				technology "C++"
 
-				-> shop_database "Queries and update information about available shop goods" "SQL"
+				-> shop_database "Queries and update information about available shop goods" "JS"
 			}
 
 			cart_service = container "Cart service" {
 				description "Handles customer cart management"
 				technology "C++"
 
-				-> cart_database "Reads and updates cart information" "SQL"
+				-> cart_database "Reads and updates cart information" "Native"
 				-> shop_service "Makes queries to get available shop information" "HTTP"
 			}
 
