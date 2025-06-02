@@ -89,6 +89,7 @@ workspace "Online shop" {
 
 			guest -> online_shop.user_service "Guest issues POST HTTP request with required user info"
 			online_shop.user_service -> online_shop.user_database "Inserts a new customer entry into"
+			online_shop.user_service -> online_shop.user_cache "Caches new customer entry into"
 		}
 
 		dynamic online_shop "user-info-query-hit" {
