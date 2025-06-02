@@ -1,0 +1,79 @@
+components_manager:
+  task_processors:
+    main-task-processor:
+      worker_threads: 1
+
+    fs-task-processor:
+      worker_threads: 1
+
+  default_task_processor: main-task-processor
+
+  components:
+    server:
+      listener:
+        port: 8080
+        task_processor: main-task-processor
+
+    logging:
+      fs-task-processor: fs-task-processor
+      loggers:
+        default:
+          file_path: '@stderr'
+          level: warning
+          overflow_behavior: discard
+
+    dns-client:
+      fs-task-processor: fs-task-processor
+
+    testsuite-support:
+
+    default-secdist-provider:
+      config: /home/userver/secdist.json
+
+    cors-middleware:
+      allow-origin: 'http://localhost:8000'
+      allow-methods: 'GET, POST, PUT, DELETE, OPTIONS'
+      allow-headers: 'Content-Type, Authorization'
+
+    auth-middleware: {}
+    auth-pipeline-builder: {}
+
+    default-server-middleware-pipeline-builder:
+      append:
+        - cors-middleware
+
+    user-storage: {}
+
+    user-handler:
+      path: /user/*
+      method: GET,POST,PUT,DELETE,OPTIONS
+      task_processor: main-task-processor
+      middlewares:
+        pipeline-builder: auth-pipeline-builder
+        auth-middleware:
+          public-methods: [POST]
+
+    auth-handler:
+      path: /auth
+      method: POST,OPTIONS
+      task_processor: main-task-processor
+
+    user-database:
+      dbconnection: 'postgresql://admin:assword@postgres-db:5432/user-db'
+      blocking_task_processor: fs-task-processor
+      dns_resolver: async
+      sync-start: true
+      connlimit_mode: manual
+
+    user-cache:
+      groups:
+        - config_name: users
+          db: users
+          sharding_strategy: RedisStandalone
+
+      thread_pools:
+        redis_thread_pool_size: 1
+        sentinel_thread_pool_size: 1
+
+      subscribe_groups:
+

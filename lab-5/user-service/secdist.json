@@ -1,0 +1,14 @@
+{
+	"redis_settings": {
+		"users": {
+			"password": "",
+			"shards": [{"name": "master0"}],
+			"sentinels": [
+				{
+					"host": "valkey-cache",
+					"port": 6379
+				}
+			]
+		}
+	}
+}

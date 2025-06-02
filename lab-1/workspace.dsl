@@ -18,11 +18,18 @@ workspace "Online shop" {
 				technology "PostgreSQL"
 			}
 
+			user_cache = container "User cache" {
+				tags "database"
+				description "Caches information about registered cusomers"
+				technology "Valkey"
+			}
+
 			user_service = container "User service" {
 				description "Handles customer information query and authentication"
 				technology "C++"
 
 				-> user_database "Reads or updates customer information" "SQL"
+				-> user_cache "Reads or updates customer cache" "HTTP"
 			}
 
 			cart_database = container "Cart database" {
@@ -84,12 +91,22 @@ workspace "Online shop" {
 			online_shop.user_service -> online_shop.user_database "Inserts a new customer entry into"
 		}
 
-		dynamic online_shop "user-info-query" {
+		dynamic online_shop "user-info-query-hit" {
 			autoLayout lr
-			description "User information query process"
+			description "User information query process (cache hit)"
 
 			admin -> online_shop.user_service "Admin issues GET HTTP request with a login in query path"
+			online_shop.user_service -> online_shop.user_cache "Queries cached user info by login"
+		}
+
+		dynamic online_shop "user-info-query-miss" {
+			autoLayout lr
+			description "User information query process (cache miss)"
+
+			admin -> online_shop.user_service "Admin issues GET HTTP request with a login in query path"
+			online_shop.user_service -> online_shop.user_cache "Queries cached user info by login"
 			online_shop.user_service -> online_shop.user_database "Makes a query by login to"
+			online_shop.user_service -> online_shop.user_cache "Cache user info"
 		}
 
 		dynamic online_shop "product-creation" {
