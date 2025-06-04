@@ -1,3 +1,15 @@
 [submodule "userver"]
 	path = userver
 	url = https://github.com/userver-framework/userver
+[submodule "lab-2/jwt-cpp"]
+	path = lab-2/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp
+[submodule "lab-3/jwt-cpp"]
+	path = lab-3/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp
+[submodule "lab-4/jwt-cpp"]
+	path = lab-4/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp
+[submodule "lab-5/jwt-cpp"]
+	path = lab-5/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp
